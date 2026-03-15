@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Call Center Operations Hub · Primerica</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #070b12;
+  --surface:  #0d1422;
+  --surface2: #111c2e;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --text:     #e8edf5;
+  --text2:    #8fa3bf;
+  --text3:    #4a6080;
+  --accent:   #f59e0b;
+  --accent2:  #fbbf24;
+  --blue:     #3b82f6;
+  --green:    #10b981;
+  --red:      #ef4444;
+  --yellow:   #f59e0b;
+  --orange:   #f97316;
+  --teal:     #14b8a6;
+  --mono:     'IBM Plex Mono', monospace;
+  --sans:     'DM Sans', sans-serif;
+  --g-green:  rgba(16,185,129,0.12);
+  --g-red:    rgba(239,68,68,0.12);
+  --g-yellow: rgba(245,158,11,0.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;overflow-x:hidden;}
+
+/* Grid bg */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(245,158,11,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(245,158,11,0.03) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+
+.wrapper{position:relative;z-index:1;max-width:1600px;margin:0 auto;padding:0 20px 60px;}
+
+/* ── HEADER ── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 0;border-bottom:1px solid var(--border);
+  margin-bottom:20px;
+}
+.logo{display:flex;align-items:center;gap:14px;}
+.logo-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--orange));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+}
+.logo-text{font-size:18px;font-weight:800;letter-spacing:0.05em;line-height:1;}
+.logo-sub{font-size:11px;color:var(--text3);font-family:var(--mono);letter-spacing:0.1em;margin-top:3px;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.live-badge{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);
+  border-radius:20px;padding:5px 12px;
+  font-size:10px;font-family:var(--mono);color:var(--green);letter-spacing:0.1em;
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.last-updated{font-family:var(--mono);font-size:11px;color:var(--text3);}
+
+.upload-btn{
+  background:transparent;border:1px solid var(--border2);
+  border-radius:8px;color:var(--accent);font-family:var(--sans);
+  font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;
+  transition:all 0.2s;letter-spacing:0.05em;
+}
+.upload-btn:hover{background:rgba(245,158,11,0.1);border-color:var(--accent);}
+#fileInput{display:none;}
+
+/* ── CONTROLS ── */
+.controls{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:14px 20px;margin-bottom:24px;
+}
+.ctrl-group{display:flex;align-items:center;gap:8px;}
+.ctrl-label{font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;}
+.tab-group{display:flex;gap:4px;}
+.tab-btn{
+  background:transparent;border:1px solid var(--border2);border-radius:6px;
+  color:var(--text2);font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:6px 14px;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;
+}
+.tab-btn.active{background:var(--accent);border-color:var(--accent);color:#000;}
+.tab-btn:hover:not(.active){color:var(--accent);border-color:var(--accent);}
+.ctrl-select{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text);font-family:var(--mono);font-size:12px;padding:6px 10px;
+  outline:none;cursor:pointer;
+}
+.ctrl-input{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text);font-family:var(--mono);font-size:12px;padding:6px 10px;outline:none;
+}
+.ctrl-divider{width:1px;height:24px;background:var(--border);}
+
+/* ── GOALS BANNER ── */
+.goals-row{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;
+  margin-bottom:20px;
+}
+.goal-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:16px;position:relative;overflow:hidden;
+}
+.goal-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+}
+.goal-card.good::before{background:var(--green);}
+.goal-card.warn::before{background:var(--yellow);}
+.goal-card.bad::before{background:var(--red);}
+.goal-card.neutral::before{background:var(--border2);}
+.goal-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.goal-value{font-size:30px;font-weight:700;line-height:1;margin-bottom:4px;font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;}
+.goal-value.good{color:var(--green);}
+.goal-value.warn{color:var(--yellow);}
+.goal-value.bad{color:var(--red);}
+.goal-value.neutral{color:var(--text2);}
+.goal-target{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text3);}
+.goal-bar-wrap{height:4px;background:var(--surface2);border-radius:2px;margin-top:8px;overflow:hidden;}
+.goal-bar{height:100%;border-radius:2px;transition:width 0.6s ease;}
+.goal-bar.good{background:var(--green);}
+.goal-bar.warn{background:var(--yellow);}
+.goal-bar.bad{background:var(--red);}
+
+/* ── VOLUME CARDS ── */
+.vol-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px;}
+@media(max-width:1200px){.vol-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:800px){.vol-grid{grid-template-columns:repeat(2,1fr);}}
+.vol-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:18px 20px;display:flex;align-items:center;gap:14px;
+}
+.vol-icon{font-size:22px;flex-shrink:0;}
+.vol-label{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;}
+.vol-val{font-size:28px;font-weight:700;line-height:1;margin:3px 0;font-family:'DM Sans',sans-serif;letter-spacing:-0.02em;}
+.vol-sub{font-family:var(--mono);font-size:10px;color:var(--text3);}
+
+/* ── CHARTS ── */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.chart-title{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:14px;}
+.bar-chart{
+  display:flex;align-items:flex-end;gap:4px;height:100px;
+  position:relative;
+}
+.bar-col{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;}
+.bar{
+  width:100%;border-radius:3px 3px 0 0;transition:height 0.4s ease;
+  cursor:default;position:relative;
+}
+.bar:hover::after{
+  content:attr(data-tip);position:absolute;bottom:calc(100% + 4px);left:50%;
+  transform:translateX(-50%);background:#1a2940;border:1px solid var(--border2);
+  border-radius:5px;padding:3px 7px;font-family:var(--mono);font-size:10px;
+  white-space:nowrap;z-index:20;color:var(--text);pointer-events:none;
+}
+.bar-lbl{font-family:var(--mono);font-size:8px;color:var(--text3);margin-top:3px;text-align:center;}
+.hop-note{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:8px;padding-top:6px;border-top:1px solid var(--border);}
+
+/* ── SECTION HEADER ── */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-size:13px;font-weight:700;font-family:'Syne',sans-serif;letter-spacing:0.06em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;}
+.sec-title::before{content:'';width:3px;height:16px;background:var(--accent);border-radius:2px;}
+.sec-count{font-family:var(--mono);font-size:11px;color:var(--text3);}
+
+/* ── TABLES ── */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  background:var(--surface2);font-family:var(--mono);font-size:10px;
+  color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;
+  padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);
+  white-space:nowrap;cursor:pointer;user-select:none;
+}
+thead th:hover{color:var(--accent);}
+tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(255,255,255,0.02);}
+tbody td{padding:10px 14px;font-size:13px;font-family:'DM Sans',sans-serif;}
+tfoot td{
+  padding:10px 14px;font-size:13px;
+  font-family:'DM Sans',sans-serif;
+  background:rgba(245,158,11,0.05);
+  border-top:2px solid var(--border2);
+  font-weight:600;
+}
+
+/* KPI badges */
+.kpi-good{color:var(--green);}
+.kpi-warn{color:var(--yellow);}
+.kpi-bad{color:var(--red);}
+.kpi-neutral{color:var(--text2);}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;}
+.badge-green{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
+.badge-yellow{background:rgba(245,158,11,0.12);color:var(--yellow);border:1px solid rgba(245,158,11,0.25);}
+.badge-red{background:rgba(239,68,68,0.12);color:var(--red);border:1px solid rgba(239,68,68,0.25);}
+.badge-blue{background:rgba(59,130,246,0.12);color:var(--blue);border:1px solid rgba(59,130,246,0.25);}
+
+.pct-bar-wrap{width:80px;height:4px;background:var(--surface2);border-radius:2px;display:inline-block;vertical-align:middle;overflow:hidden;}
+.pct-bar-fill{height:100%;border-radius:2px;}
+
+/* ── STAFFING SECTION ── */
+.staffing-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;}
+.staffing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px;margin-top:14px;}
+.staff-hour{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 6px;text-align:center;transition:border-color 0.15s;cursor:default;}
+.staff-hour:hover{border-color:var(--accent);}
+.staff-hour-label{font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:5px;}
+.staff-total{font-size:22px;font-weight:700;font-family:'DM Sans',sans-serif;line-height:1;margin-bottom:2px;}
+.staff-breakdown{font-family:var(--mono);font-size:9px;color:var(--text3);line-height:1.6;}
+.staff-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden;}
+.staff-bar-fill{height:100%;border-radius:2px;transition:width 0.4s;}
+.staff-hour.s-low .staff-total{color:var(--red);}
+.staff-hour.s-mid .staff-total{color:var(--yellow);}
+.staff-hour.s-good .staff-total{color:var(--green);}
+.staff-hour.s-closed{opacity:0.3;pointer-events:none;}
+.staffing-summary{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.staff-stat-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
+.staff-stat-val{font-family:'DM Sans',sans-serif;font-size:22px;font-weight:700;line-height:1;}
+.staffing-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text2);}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.no-staffing{text-align:center;padding:32px;color:var(--text3);font-family:'DM Sans',sans-serif;font-size:13px;}
+
+.ivr-section{
+  background:rgba(249,115,22,0.04);
+  border:1px solid rgba(249,115,22,0.2);
+  border-radius:14px;padding:20px;margin-bottom:24px;
+}
+.ivr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:900px){.ivr-grid{grid-template-columns:repeat(2,1fr);}}
+.ivr-badge{
+  background:rgba(249,115,22,0.15);border:1px solid rgba(249,115,22,0.35);
+  border-radius:20px;padding:3px 12px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  color:var(--orange);letter-spacing:0.04em;
+}
+.ivr-note{
+  font-family:'DM Sans',sans-serif;font-size:11px;color:var(--text3);
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-style:italic;
+}
+
+.spanish-section{
+  background:rgba(245,158,11,0.04);
+  border:1px solid rgba(245,158,11,0.25);
+  border-radius:14px;padding:20px;margin-bottom:24px;
+}
+.spanish-badge{
+  background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);
+  border-radius:20px;padding:3px 12px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  color:var(--accent);letter-spacing:0.04em;
+}
+.spanish-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;}
+@media(max-width:1100px){.spanish-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:700px){.spanish-grid{grid-template-columns:repeat(2,1fr);}}
+
+.chat-section{
+  background:rgba(20,184,166,0.04);
+  border:1px solid rgba(20,184,166,0.2);
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:24px;
+}
+.chat-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:16px;
+}
+.chat-badge{
+  background:rgba(20,184,166,0.15);
+  border:1px solid rgba(20,184,166,0.35);
+  border-radius:20px;padding:3px 12px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  color:var(--teal);letter-spacing:0.04em;
+}
+.chat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+@media(max-width:900px){.chat-grid{grid-template-columns:repeat(3,1fr);}}
+.chat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;
+}
+.chat-card .vol-val{font-size:22px;}
+.voice-label{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;
+  margin-bottom:12px;
+}
+.voice-label::before{content:'📞';font-size:14px;}
+.voice-divider{
+  border:none;border-top:1px solid var(--border);
+  margin:0 0 16px 0;
+}
+
+/* Empty state */
+.empty-state{
+  grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--text3);
+}
+.empty-icon{font-size:48px;margin-bottom:16px;}
+.empty-text{font-family:var(--mono);font-size:14px;color:var(--text2);margin-bottom:8px;}
+
+/* week nav */
+.week-nav{display:flex;align-items:center;gap:6px;}
+.week-nav-btn{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text2);font-size:16px;padding:3px 9px;cursor:pointer;transition:all 0.15s;
+}
+.week-nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+.week-range-lbl{
+  font-family:var(--mono);font-size:12px;color:var(--text);
+  background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+  padding:5px 12px;white-space:nowrap;min-width:200px;text-align:center;
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">📡</div>
+    <div>
+      <div class="logo-text">CALL CENTER OPS HUB</div>
+      <div class="logo-sub">Primerica · CDR Analytics</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="last-updated" id="lastUpdated">Ready</span>
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <input type="file" id="fileInput" accept=".csv" onchange="handleUpload(event)">
+    <input type="file" id="staffingInput" accept=".csv" onchange="handleStaffingUpload(event)">
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+      <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+        📞 Upload CDR Report
+      </button>
+      <button class="upload-btn" style="border-color:rgba(20,184,166,0.5);color:var(--teal);" onclick="document.getElementById('staffingInput').click()">
+        👥 Upload User State Detail
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="ctrl-group">
+    <span class="ctrl-label">View</span>
+    <div class="tab-group">
+      <button class="tab-btn active" id="tabDay" onclick="setTab('day')">Day</button>
+      <button class="tab-btn" id="tabWeek" onclick="setTab('week')">Week</button>
+      <button class="tab-btn" id="tabMonth" onclick="setTab('month')">Month</button>
+    </div>
+  </div>
+  <div class="ctrl-group" id="datePicker">
+    <span class="ctrl-label">Date</span>
+    <input type="date" class="ctrl-input" id="dateFilter" onchange="applyFilters()">
+  </div>
+  <div class="ctrl-group" id="weekNavGroup" style="display:none;">
+    <span class="ctrl-label">Week</span>
+    <div class="week-nav">
+      <button class="week-nav-btn" onclick="navWeek(-1)">‹</button>
+      <span class="week-range-lbl" id="weekRangeLbl">—</span>
+      <button class="week-nav-btn" onclick="navWeek(1)">›</button>
+    </div>
+  </div>
+  <div class="ctrl-divider"></div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">Queue</span>
+    <select class="ctrl-select" id="queueFilter" onchange="applyFilters()">
+      <option value="">All Queues</option>
+    </select>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">User</span>
+    <select class="ctrl-select" id="userFilter" onchange="applyFilters()">
+      <option value="">All Users</option>
+    </select>
+  </div>
+  <div style="margin-left:auto;display:flex;gap:8px;">
+    <button class="upload-btn" onclick="exportCSV()">⬇ Export</button>
+    <button class="upload-btn" onclick="window.print()">🖨 Print</button>
+  </div>
+</div>
+
+<!-- VOICE LABEL -->
+<div class="voice-label">English Voice Calls Only — Spanish, Chat &amp; IVR excluded from totals below</div>
+<hr class="voice-divider">
+
+<!-- GOAL CARDS -->
+<div class="goals-row" id="goalCards"></div>
+
+<!-- VOLUME CARDS -->
+<div class="vol-grid" id="volCards"></div>
+
+<!-- IVR SECTION -->
+<div class="ivr-section">
+  <div class="sec-header" style="margin-bottom:14px;">
+    <div class="sec-title" style="margin:0;">IVR Activity</div>
+    <span class="ivr-badge">📟 IVR — Pre-Queue</span>
+  </div>
+  <div class="ivr-grid" id="ivrCards"></div>
+  <div class="ivr-note">IVR calls never reached an agent queue — excluded from all agent metrics, abandon %, and service level above.</div>
+</div>
+
+<!-- SPANISH SECTION -->
+<div class="spanish-section">
+  <div class="sec-header" style="margin-bottom:14px;">
+    <div class="sec-title" style="margin:0;">Spanish Language Queues</div>
+    <span class="spanish-badge">🇪🇸 ESPAÑOL</span>
+    <span class="sec-count" id="spanishCount"></span>
+  </div>
+  <!-- Spanish goal cards mini row -->
+  <div id="spanishGoals" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px;"></div>
+  <!-- Spanish vol cards -->
+  <div class="spanish-grid" id="spanishCards"></div>
+  <!-- Spanish queue table -->
+  <div class="table-wrap" id="spanishTableWrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Queue</th>
+          <th>Offered</th>
+          <th>Answered</th>
+          <th>Transferred</th>
+          <th>Abandoned</th>
+          <th>Abandon%</th>
+          <th>Callbacks</th>
+          <th>Outbound</th>
+          <th>Denied</th>
+          <th>Avg Talk</th>
+          <th>AHT</th>
+          <th>ASA</th>
+          <th>Svc Level</th>
+        </tr>
+      </thead>
+      <tbody id="spanishQueueBody"></tbody>
+      <tfoot id="spanishQueueFoot"></tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- CHAT SECTION -->
+<div class="chat-section" id="chatSection">
+  <div class="chat-header">
+    <div class="sec-title" style="margin:0;">Chat Support</div>
+    <span class="chat-badge">💬 CHAT</span>
+    <span class="sec-count" id="chatCount"></span>
+  </div>
+  <div class="chat-grid" id="chatCards"></div>
+</div>
+
+<!-- CHARTS -->
+<div class="charts-row">
+  <div class="chart-card">
+    <div class="chart-title">Calls Per Hour (Offered vs Answered)</div>
+    <div class="bar-chart" id="callsChart"></div>
+    <div class="hop-note" id="callsHopNote"></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">Abandon & Service Level by Hour</div>
+    <div class="bar-chart" id="slChart"></div>
+    <div class="hop-note" id="slHopNote"></div>
+  </div>
+</div>
+
+<!-- STAFFING BY HOUR -->
+<div class="staffing-section">
+  <div class="sec-header" style="margin-bottom:0;">
+    <div class="sec-title">Staffing by Hour</div>
+    <span class="sec-count" id="staffingStatus" style="color:var(--text3);font-family:var(--mono);font-size:11px;">Upload Staffing CSV to enable</span>
+  </div>
+  <div id="staffingContent">
+    <div class="no-staffing">
+      👥 Upload your <strong>User State Detail</strong> report using the teal button at the top right to see staffing by hour.<br>
+      <span style="font-size:12px;margin-top:8px;display:block;color:var(--text3);">
+        Shows agents on shift per hour — Break and Lunch are excluded from the staffed count. All other states count as staffed.
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- QUEUE TABLE -->
+<div class="mb24">
+  <div class="sec-header">
+    <div class="sec-title">Queue Performance</div>
+    <span class="sec-count" id="queueCount"></span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Queue</th>
+          <th>Offered</th>
+          <th>Answered</th>
+          <th>Transferred</th>
+          <th>Abandoned</th>
+          <th>Abandon%</th>
+          <th>Callbacks</th>
+          <th>Outbound</th>
+          <th>Denied</th>
+          <th>Denied%</th>
+          <th>Avg Talk</th>
+          <th>AHT</th>
+          <th>ASA</th>
+          <th>Svc Level</th>
+        </tr>
+      </thead>
+      <tbody id="queueBody"></tbody>
+      <tfoot id="queueFoot"></tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- USER TABLE -->
+<div>
+  <div class="sec-header">
+    <div class="sec-title">User Performance</div>
+    <span class="sec-count" id="userCount"></span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Answered</th>
+          <th>Transferred</th>
+          <th>Outbound</th>
+          <th>Avg Talk</th>
+          <th>AHT</th>
+          <th>ASA</th>
+          <th>Wrap Time</th>
+          <th>Svc Level</th>
+          <th>Callbacks</th>
+          <th>Denied</th>
+        </tr>
+      </thead>
+      <tbody id="userBody"></tbody>
+      <tfoot id="userFoot"></tfoot>
+    </table>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+
+<script>
+// ============================================================
+// DATA & STATE
+// ============================================================
+let RAW = [];
+let STAFFING_RAW = [];  // UserStateDetail rows for staffing
+let currentTab = 'day';
+let weekMonday = null;
+
+// Goals
+const GOALS = {
+  asa:     { target: 60,   unit: 's',  label: 'ASA',          goodDir: 'low',  fmt: v => v+'s' },
+  aht:     { target: 450,  unit: 's',  label: 'AHT',          goodDir: 'low',  fmt: v => secToMS(v) },
+  abandon: { target: 10,   unit: '%',  label: 'Queue Abandon %', goodDir: 'low',  fmt: v => v+'%' },
+  cb:      { target: 3600, unit: 's',  label: 'Avg CB Time',   goodDir: 'low',  fmt: v => secToHM(v) },
+  sl:      { target: 80,   unit: '%',  label: 'Service Level', goodDir: 'high', fmt: v => v+'%' },
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function hms(s) {
+  if (!s || !s.trim() || s.trim() === '00:00:00') return 0;
+  const p = s.trim().split(':').map(Number);
+  if (p.length === 3) return p[0]*3600 + p[1]*60 + p[2];
+  return 0;
+}
+function secToMS(s) {
+  s = Math.round(s);
+  const m = Math.floor(s/60), sec = s%60;
+  return `${m}:${String(sec).padStart(2,'0')}`;
+}
+function secToHM(s) {
+  if (!s) return '—';
+  s = Math.round(s);
+  const h = Math.floor(s/3600), m = Math.floor((s%3600)/60);
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m ${s%60}s`;
+}
+function avg(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
+function pct(n, d) { return d > 0 ? Math.round(n/d*100) : 0; }
+function goalClass(key, val) {
+  const g = GOALS[key];
+  if (g.goodDir === 'low') return val <= g.target ? 'good' : val <= g.target*1.25 ? 'warn' : 'bad';
+  return val >= g.target ? 'good' : val >= g.target*0.8 ? 'warn' : 'bad';
+}
+function badgeClass(cls) {
+  return cls === 'good' ? 'badge-green' : cls === 'warn' ? 'badge-yellow' : 'badge-red';
+}
+
+// ============================================================
+// CSV PARSING
+// ============================================================
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const delim = lines[0].includes('\t') ? '\t' : ',';
+  function parseLine(line) {
+    const res = []; let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === '"') { if (inQ && line[i+1]==='"'){cur+='"';i++;} else inQ=!inQ; }
+      else if (line[i] === delim && !inQ) { res.push(cur.trim()); cur=''; }
+      else cur += line[i];
+    }
+    res.push(cur.trim());
+    return res;
+  }
+  const headers = parseLine(lines[0]);
+  return lines.slice(1).filter(l=>l.trim()).map(l => {
+    const v = parseLine(l);
+    const o = {};
+    headers.forEach((h,i) => o[h.trim().replace(/\uFEFF/g,'')] = (v[i]||'').trim());
+    return o;
+  });
+}
+
+function normalizeRows(rows) {
+  return rows.map(r => {
+    // Parse date
+    const dtRaw = (r['Date / Time']||r['date']).trim();
+    let date = '', hour = -1;
+    if (dtRaw) {
+      try {
+        // Handle narrow no-break space in AM/PM
+        const clean = dtRaw.replace(/\u202f/g,' ').replace(/\u00a0/g,' ');
+        const d = new Date(clean);
+        if (!isNaN(d)) {
+          date = d.toLocaleDateString('en-CA');
+          hour = d.getHours();
+        }
+      } catch(e) {}
+    }
+    const code = (r['Completion Code']||'').trim();
+    const dir  = (r['Direction']||'').trim();
+    const queue = (r['Queue']||'').trim();
+    const user  = (r['User']||'').trim().replace(/\s+/g,' ');
+    const answeredInSLA = (r['Answered In SLA']||'').trim().toLowerCase() === 'true';
+    const cbRequested   = (r['Callbacks (Requested)']||'').trim().toLowerCase() === 'true';
+    const denied = parseInt(r['Denied (Previously)']||'0') > 0;
+
+    const isChat     = (r['Channel Type']||'').trim() === 'Chat' || queue.includes('Chat');
+    const isSpanish  = queue.toLowerCase().includes('spanish') || queue === 'Non-Monitored Spanish';
+    const isTransfer = parseInt(r['Forwarded']||'0') > 0 || hms(r['Transfer Time']||'') > 0;
+
+    const isAnswered    = code === 'Delivered';
+    const isAbandoned   = code === 'Abandoned' || code === 'Abandoned: Elected Callback';
+    const isIVRAbandoned= code === 'IVR Abandoned';
+    const isCallback    = cbRequested || code === 'Abandoned: Elected Callback' || code === 'Standard Callback Routed';
+    const isOutbound    = dir === 'Outbound';
+    // isOffered: reached the queue — exclude elected-callback rows from offered to avoid double-counting
+    // (Abandoned: Elected Callback creates a separate Standard Callback Routed row for the same session)
+    const isOffered     = !!queue && !isOutbound && !isIVRAbandoned &&
+                          (isAnswered || code === 'Abandoned' || code === 'Standard Callback Routed');
+
+    return {
+      date, hour, queue, user,
+      code, dir,
+      isAnswered, isAbandoned, isIVRAbandoned, isCallback, isOutbound, isOffered,
+      isChat, isSpanish, isTransfer,
+      answeredInSLA, denied,
+      talkSec:   hms(r['Talk Time']),
+      handleSec: hms(r['Handle Time']),
+      queueSec:  hms(r['Queue Time']),
+      wrapSec:   hms(r['Wrap Time']),
+      cbSec:     hms(r['Callback Time']),
+    };
+  }).filter(r => r.date);
+}
+
+// ============================================================
+// FILTERING
+// ============================================================
+function getMondayOf(ds) {
+  const d = new Date(ds+'T00:00:00');
+  const day = d.getDay();
+  d.setDate(d.getDate() - (day===0?6:day-1));
+  return d;
+}
+function getWeekDays(mon) {
+  return Array.from({length:7},(_,i)=>{
+    const d = new Date(mon); d.setDate(mon.getDate()+i);
+    return d.toLocaleDateString('en-CA');
+  });
+}
+
+function filterData(chatOnly=false, spanishOnly=false) {
+  const ds  = document.getElementById('dateFilter').value;
+  const q   = document.getElementById('queueFilter').value;
+  const u   = document.getElementById('userFilter').value;
+  let rows  = RAW;
+
+  if (currentTab === 'day' && ds) {
+    rows = rows.filter(r => r.date === ds);
+  } else if (currentTab === 'week' && weekMonday) {
+    const days = getWeekDays(weekMonday);
+    rows = rows.filter(r => days.includes(r.date));
+  } else if (currentTab === 'month' && ds) {
+    const [y,m] = ds.split('-').map(Number);
+    rows = rows.filter(r => {
+      const [ry,rm] = r.date.split('-').map(Number);
+      return ry===y && rm===m;
+    });
+  }
+  if (q) rows = rows.filter(r => r.queue === q);
+  if (u) rows = rows.filter(r => r.user === u);
+
+  // Split voice vs chat vs spanish
+  if (chatOnly) return rows.filter(r => r.isChat);
+  if (spanishOnly) return rows.filter(r => !r.isChat && r.isSpanish);
+  return rows.filter(r => !r.isChat && !r.isSpanish);
+}
+
+// ============================================================
+// METRICS COMPUTATION
+// ============================================================
+function computeMetrics(rows) {
+  const offered    = rows.filter(r=>r.isOffered);           // queue-offered only
+  const answered   = rows.filter(r=>r.isAnswered);
+  const abandoned  = rows.filter(r=>r.isAbandoned && r.code === 'Abandoned');  // pure queue abandons only
+  const callbacks  = rows.filter(r=>r.isCallback);
+  const outbound   = rows.filter(r=>r.isOutbound);
+  const denied     = rows.filter(r=>r.denied);
+  const transferred = rows.filter(r=>r.isTransfer && r.isAnswered);
+  const slaRows    = answered.filter(r=>r.answeredInSLA);
+  const cbDelivered= rows.filter(r=>r.code==='Standard Callback Routed'&&r.cbSec>0);
+
+  // IVR — completely separate from agent metrics
+  const ivrAbandoned = rows.filter(r=>r.isIVRAbandoned);
+  const ivrSuccess   = rows.filter(r=>r.code==='IVR Success');
+  const ivrTotal     = ivrAbandoned.length + ivrSuccess.length;
+  const ivrAbandonPct= pct(ivrAbandoned.length, ivrTotal);
+
+  const avgTalk    = avg(answered.filter(r=>r.talkSec>0).map(r=>r.talkSec));
+  const avgHandle  = avg(answered.filter(r=>r.handleSec>0).map(r=>r.handleSec));
+  const avgASA     = avg(answered.filter(r=>r.queueSec>0).map(r=>r.queueSec));
+  const avgCB      = avg(cbDelivered.map(r=>r.cbSec));
+  const slPct      = pct(slaRows.length, answered.length);
+  const abandonPct = pct(abandoned.length, offered.length);  // queue-only
+  const deniedPct  = pct(denied.length, offered.length + denied.length);
+  const transferPct= pct(transferred.length, answered.length);
+
+  return {
+    offered: offered.length,
+    answered: answered.length,
+    abandoned: abandoned.length,
+    callbacks: callbacks.length,
+    outbound: outbound.length,
+    denied: denied.length,
+    deniedPct,
+    transferred: transferred.length,
+    transferPct,
+    // IVR separate
+    ivrAbandoned: ivrAbandoned.length,
+    ivrSuccess: ivrSuccess.length,
+    ivrTotal,
+    ivrAbandonPct,
+    avgTalk, avgHandle, avgASA, avgCB,
+    slPct, abandonPct,
+  };
+}
+
+function computeQueueMetrics(rows) {
+  const queues = [...new Set(rows.map(r=>r.queue).filter(Boolean))].sort();
+  return queues.map(q => {
+    const qr = rows.filter(r=>r.queue===q);
+    return { queue: q, ...computeMetrics(qr) };
+  });
+}
+
+function computeUserMetrics(rows) {
+  const users = [...new Set(rows.map(r=>r.user).filter(Boolean))].sort();
+  return users.map(u => {
+    const ur = rows.filter(r=>r.user===u);
+    const answered = ur.filter(r=>r.isAnswered);
+    const slaRows  = answered.filter(r=>r.answeredInSLA);
+    return {
+      user: u,
+      answered: answered.length,
+      transferred: ur.filter(r=>r.isTransfer && r.isAnswered).length,
+      outbound: ur.filter(r=>r.isOutbound).length,
+      avgTalk:   avg(answered.filter(r=>r.talkSec>0).map(r=>r.talkSec)),
+      avgHandle: avg(answered.filter(r=>r.handleSec>0).map(r=>r.handleSec)),
+      avgASA:    avg(answered.filter(r=>r.queueSec>0).map(r=>r.queueSec)),
+      avgWrap:   avg(answered.filter(r=>r.wrapSec>0).map(r=>r.wrapSec)),
+      slPct:     pct(slaRows.length, answered.length),
+      callbacks: ur.filter(r=>r.isCallback).length,
+      denied:    ur.filter(r=>r.denied).length,
+    };
+  }).filter(u=>u.answered>0||u.outbound>0);
+}
+
+function computeHourly(rows) {
+  const hrs = {};
+  for(let h=8;h<22;h++) hrs[h]={offered:0,answered:0,abandoned:0,slaAnswered:0};
+  rows.forEach(r => {
+    if(r.hour<8||r.hour>=22) return;
+    if(r.isOffered)   hrs[r.hour].offered++;
+    if(r.isAnswered)  { hrs[r.hour].answered++; if(r.answeredInSLA) hrs[r.hour].slaAnswered++; }
+    if(r.isAbandoned) hrs[r.hour].abandoned++;
+  });
+  return hrs;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderChatSection(chatRows) {
+  const m = computeMetrics(chatRows);
+  const queues = [...new Set(chatRows.map(r=>r.queue).filter(Boolean))].sort();
+  document.getElementById('chatCount').textContent = `${chatRows.length} interactions · ${queues.join(', ')||'No queues'}`;
+
+  if (!chatRows.length) {
+    document.getElementById('chatCards').innerHTML = `<div style="grid-column:1/-1;color:var(--text3);font-family:'DM Sans',sans-serif;font-size:13px;padding:8px 0;">No chat data for selected period</div>`;
+    return;
+  }
+
+  const cards = [
+    { icon:'💬', label:'Total Offered',     val: m.offered,      color:'var(--text)' },
+    { icon:'✅', label:'Answered',          val: m.answered,     color:'var(--green)' },
+    { icon:'❌', label:'Abandoned',         val: m.abandoned,    color:'var(--red)', sub:`${m.abandonPct}% of offered` },
+    { icon:'↗️', label:'Transferred',       val: m.transferred,  color:'var(--teal)' },
+    { icon:'⏱',  label:'Avg Handle Time',   val: m.avgHandle>0?secToMS(m.avgHandle):'—', color:'var(--text2)' },
+  ];
+  document.getElementById('chatCards').innerHTML = cards.map(c=>`
+    <div class="chat-card vol-card">
+      <div class="vol-icon">${c.icon}</div>
+      <div>
+        <div class="vol-label">${c.label}</div>
+        <div class="vol-val" style="color:${c.color}">${c.val}</div>
+        ${c.sub?`<div class="vol-sub">${c.sub}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// STAFFING
+// ============================================================
+const BREAK_STATES = new Set(['break - 10 minute max', 'lunch']);
+
+function parseStaffingCSV(text) {
+  const lines = text.trim().split('\n');
+  const delim = lines[0].includes('\t') ? '\t' : ',';
+  function parseLine(line) {
+    const res = []; let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === '"') { if (inQ && line[i+1]==='"'){cur+='"';i++;} else inQ=!inQ; }
+      else if (line[i] === delim && !inQ) { res.push(cur.trim()); cur=''; }
+      else cur += line[i];
+    }
+    res.push(cur.trim());
+    return res;
+  }
+  const headers = parseLine(lines[0]);
+  return lines.slice(1).filter(l=>l.trim()).map(l => {
+    const v = parseLine(l);
+    const o = {};
+    headers.forEach((h,i) => o[h.trim().replace(/\uFEFF/g,'')] = (v[i]||'').trim());
+    return o;
+  });
+}
+
+function normalizeStaffingRows(rows) {
+  return rows.map(r => {
+    const user  = (r['User Name']||'').trim().replace(/\s+/g,' ');
+    const state = (r['State Name']||'').trim();
+    const startRaw = (r['Start Time']||'').trim();
+    const endRaw   = (r['End Time']||'').trim();
+    if (!user || !startRaw) return null;
+    try {
+      const parseDate = s => {
+        const clean = s.replace(/\u202f/g,' ').replace(/\u00a0/g,' ');
+        return new Date(clean);
+      };
+      const start = parseDate(startRaw);
+      const end   = endRaw ? parseDate(endRaw) : new Date(start.getTime() + 30*60000);
+      if (isNaN(start)) return null;
+      const date  = start.toLocaleDateString('en-CA');
+      return { user, state, start, end, date,
+               isBreak: BREAK_STATES.has(state.toLowerCase()) };
+    } catch(e) { return null; }
+  }).filter(Boolean);
+}
+
+function computeStaffingByHour(staffRows, dates) {
+  const isMultiDay = dates.length > 1;
+  const dateSet = new Set(dates);
+  const dateRows = staffRows.filter(r => dateSet.has(r.date));
+  if (!dateRows.length) return null;
+  const result = {};
+  for (let h = 8; h < 22; h++) {
+    const byDate = {};
+    dates.forEach(d => { byDate[d] = { present: new Set(), onBreak: new Set() }; });
+    dateRows.forEach(r => {
+      const hStart = new Date(`${r.date}T${String(h).padStart(2,'0')}:00:00`);
+      const hEnd   = new Date(hStart.getTime() + 3600000);
+      if (r.start < hEnd && r.end > hStart) {
+        if (!byDate[r.date]) byDate[r.date] = { present: new Set(), onBreak: new Set() };
+        byDate[r.date].present.add(r.user);
+        if (r.isBreak) byDate[r.date].onBreak.add(r.user);
+      }
+    });
+    const activeDays = Object.values(byDate).filter(d => d.present.size > 0);
+    if (!activeDays.length) { result[h] = { total:0, onBreak:0, staffed:0, isAvg:isMultiDay }; continue; }
+    if (isMultiDay) {
+      result[h] = {
+        total:   Math.round(activeDays.reduce((s,d)=>s+d.present.size,0)/activeDays.length),
+        onBreak: Math.round(activeDays.reduce((s,d)=>s+d.onBreak.size,0)/activeDays.length),
+        staffed: Math.round(activeDays.reduce((s,d)=>s+(d.present.size-d.onBreak.size),0)/activeDays.length),
+        isAvg: true, days: activeDays.length,
+      };
+    } else {
+      const d = Object.values(byDate)[0];
+      const staffed = new Set([...d.present].filter(u => !d.onBreak.has(u)));
+      result[h] = { total:d.present.size, onBreak:d.onBreak.size, staffed:staffed.size, isAvg:false, days:1 };
+    }
+  }
+  return result;
+}
+
+function getStaffingDates() {
+  const ds = document.getElementById('dateFilter').value;
+  if (currentTab === 'day' && ds) return [ds];
+  if (currentTab === 'week' && weekMonday) return getWeekDays(weekMonday);
+  if (currentTab === 'month' && ds) {
+    const [y,m] = ds.split('-').map(Number);
+    return [...new Set(STAFFING_RAW.map(r=>r.date))].filter(d => {
+      const [ry,rm] = d.split('-').map(Number); return ry===y && rm===m;
+    }).sort();
+  }
+  const allDates = [...new Set(STAFFING_RAW.map(r=>r.date))].filter(Boolean).sort();
+  return allDates.length ? [allDates[allDates.length-1]] : [];
+}
+
+function renderStaffingSection() {
+  if (!STAFFING_RAW.length) {
+    document.getElementById('staffingContent').innerHTML = `
+      <div class="no-staffing">
+        👥 Upload your <strong>User State Detail</strong> report using the teal button at the top right to see staffing by hour.<br>
+        <span style="font-size:12px;margin-top:8px;display:block;color:var(--text3);">
+          Shows agents on shift per hour — Break and Lunch are excluded. All other states count as staffed.
+        </span>
+      </div>`;
+    return;
+  }
+  const dates = getStaffingDates();
+  if (!dates.length) { document.getElementById('staffingContent').innerHTML = `<div class="no-staffing">No staffing data for selected period.</div>`; return; }
+  const hourData = computeStaffingByHour(STAFFING_RAW, dates);
+  if (!hourData) { document.getElementById('staffingContent').innerHTML = `<div class="no-staffing">No staffing data for selected period.</div>`; return; }
+  const hours = Object.keys(hourData).map(Number).sort((a,b)=>a-b);
+  const activeHours = hours.filter(h => hourData[h].total > 0);
+  if (!activeHours.length) { document.getElementById('staffingContent').innerHTML = `<div class="no-staffing">No agent activity for selected period.</div>`; return; }
+  const isAvg     = dates.length > 1;
+  const maxStaff  = Math.max(...activeHours.map(h=>hourData[h].staffed), 1);
+  const peakHour  = activeHours.reduce((p,h) => hourData[h].staffed > hourData[p].staffed ? h : p, activeHours[0]);
+  const lowHour   = activeHours.reduce((p,h) => hourData[h].staffed < hourData[p].staffed ? h : p, activeHours[0]);
+  const avgStaff  = Math.round(activeHours.reduce((s,h)=>s+hourData[h].staffed,0) / activeHours.length);
+  const maxOnShift= Math.max(...activeHours.map(h=>hourData[h].total));
+  const fmtH = h => h===12?'12PM':h>12?`${h-12}PM`:`${h}AM`;
+  let periodLabel = '';
+  if (currentTab === 'day' && dates[0]) periodLabel = new Date(dates[0]+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+  else if (currentTab === 'week') periodLabel = `Week of ${new Date(dates[0]+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}${isAvg?' — '+dates.length+'-day avg':''}`;
+  else if (currentTab === 'month') { const ds = document.getElementById('dateFilter').value; periodLabel = ds ? new Date(ds+'T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'})+(isAvg?' — '+dates.length+'-day avg':'') : ''; }
+  document.getElementById('staffingStatus').textContent = `${periodLabel} · ${isAvg?'Avg staffed/hr':'Exact counts'}`;
+  document.getElementById('staffingContent').innerHTML = `
+    <div class="staffing-summary">
+      <div class="staff-stat"><div class="staff-stat-label">Peak ${isAvg?'Avg ':''}Staffed</div><div class="staff-stat-val" style="color:var(--green)">${hourData[peakHour].staffed} <span style="font-size:13px;color:var(--text3)">@ ${fmtH(peakHour)}</span></div></div>
+      <div class="staff-stat"><div class="staff-stat-label">Lowest ${isAvg?'Avg ':''}Staffed</div><div class="staff-stat-val" style="color:var(--yellow)">${hourData[lowHour].staffed} <span style="font-size:13px;color:var(--text3)">@ ${fmtH(lowHour)}</span></div></div>
+      <div class="staff-stat"><div class="staff-stat-label">Avg Staffed/Hr</div><div class="staff-stat-val" style="color:var(--accent)">${avgStaff}</div></div>
+      <div class="staff-stat"><div class="staff-stat-label">${isAvg?'Avg':'Max'} On Shift</div><div class="staff-stat-val" style="color:var(--text2)">${maxOnShift}</div></div>
+      ${isAvg ? `<div class="staff-stat"><div class="staff-stat-label">Days Averaged</div><div class="staff-stat-val" style="color:var(--text3)">${dates.length}</div></div>` : ''}
+    </div>
+    ${isAvg ? `<div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:10px;padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid var(--border);">📊 Showing <strong>daily averages</strong> across ${dates.length} days in the selected period</div>` : ''}
+    <div class="staffing-grid">
+      ${hours.map(h => {
+        const d = hourData[h];
+        const cls = d.total===0?'s-closed':d.staffed>=20?'s-good':d.staffed>=10?'s-mid':'s-low';
+        const barW = Math.round(d.staffed/maxStaff*100);
+        const barColor = cls==='s-good'?'var(--green)':cls==='s-mid'?'var(--yellow)':'var(--red)';
+        return `<div class="staff-hour ${cls}" title="${fmtH(h)}: ${d.staffed} staffed${isAvg?' avg':''}, ${d.onBreak} break/lunch${isAvg?' avg':''}">
+          <div class="staff-hour-label">${fmtH(h)}</div>
+          <div class="staff-total">${d.total>0?d.staffed:'—'}</div>
+          ${d.total>0?`<div class="staff-breakdown">🟢 ${d.staffed}${isAvg?' avg':''}<br>☕ ${d.onBreak}${isAvg?' avg':''}</div>`:'<div class="staff-breakdown">no data</div>'}
+          <div class="staff-bar-wrap"><div class="staff-bar-fill" style="width:${barW}%;background:${barColor};"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="staffing-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>${isAvg?'Avg staffed (active)':'Staffed (active)'}</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>☕ = Break / Lunch (not counted)</div>
+      <div class="legend-item" style="color:var(--text3);font-size:10px;font-family:var(--mono);">Ready · Answered · WrapUp · Training · QA · all other states = Staffed</div>
+    </div>`;
+}
+
+function renderIVRSection(m) {
+  const ivrAbandonClass = m.ivrAbandonPct > 50 ? 'badge-red' : m.ivrAbandonPct > 30 ? 'badge-yellow' : 'badge-blue';
+  const cards = [
+    { icon:'📟', label:'Total IVR Calls',     val: m.ivrTotal,          color:'var(--orange)', sub:'Entered phone system' },
+    { icon:'✅', label:'IVR Success',          val: m.ivrSuccess,        color:'var(--green)',  sub:'Completed IVR flow' },
+    { icon:'❌', label:'IVR Abandoned',        val: m.ivrAbandoned,      color:'var(--red)',    sub:'Hung up in IVR' },
+    { icon:'📊', label:'IVR Abandon %',        val: m.ivrAbandonPct+'%', color: m.ivrAbandonPct>40?'var(--red)':m.ivrAbandonPct>25?'var(--yellow)':'var(--text2)', sub:'of total IVR calls' },
+  ];
+  document.getElementById('ivrCards').innerHTML = cards.map(c=>`
+    <div class="vol-card" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <div class="vol-icon">${c.icon}</div>
+      <div>
+        <div class="vol-label">${c.label}</div>
+        <div class="vol-val" style="color:${c.color};font-size:22px;">${c.val}</div>
+        ${c.sub?`<div class="vol-sub">${c.sub}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function renderSpanishSection(spanishRows) {
+  const m = computeMetrics(spanishRows);
+  const qm = computeQueueMetrics(spanishRows);
+
+  // Count
+  document.getElementById('spanishCount').textContent =
+    `${m.offered} offered · ${m.answered} answered`;
+
+  // Mini goal cards
+  const goals = [
+    { key:'sl',      val: m.slPct,                  display: m.slPct+'%' },
+    { key:'asa',     val: Math.round(m.avgASA),      display: Math.round(m.avgASA)+'s' },
+    { key:'aht',     val: Math.round(m.avgHandle),   display: m.avgHandle>0?secToMS(m.avgHandle):'—' },
+    { key:'abandon', val: m.abandonPct,              display: m.abandonPct+'%' },
+    { key:'cb',      val: Math.round(m.avgCB),       display: m.avgCB>0?secToHM(m.avgCB):'—' },
+  ];
+  const targets = { sl:'≥ 80%', asa:'< 60s', aht:'< 7:30', abandon:'< 10%', cb:'< 60 min' };
+  document.getElementById('spanishGoals').innerHTML = goals.map(g => {
+    const gc = g.val===0&&g.key!=='sl' ? 'neutral' : goalClass(g.key, g.val);
+    return `<div class="goal-card ${gc}" style="padding:12px 16px;">
+      <div class="goal-label">${GOALS[g.key].label}</div>
+      <div class="goal-value ${gc}" style="font-size:22px;">${g.display}</div>
+      <div class="goal-target">Goal: ${targets[g.key]}</div>
+      <div class="goal-bar-wrap"><div class="goal-bar ${gc}" style="width:${Math.min(100,g.val)}%"></div></div>
+    </div>`;
+  }).join('');
+
+  // Vol cards
+  const cards = [
+    { icon:'📞', label:'Queue Offered',    val: m.offered,     color:'var(--text)' },
+    { icon:'✅', label:'Answered',         val: m.answered,    color:'var(--green)' },
+    { icon:'❌', label:'Abandoned',        val: m.abandoned,   color:'var(--red)',    sub:`${m.abandonPct}% of offered` },
+    { icon:'↗️', label:'Transferred',      val: m.transferred, color:'var(--teal)',   sub:`${m.transferPct}% of answered` },
+    { icon:'🚫', label:'Denied',           val: m.denied,      color:'var(--yellow)', sub:`${m.deniedPct}% of offered` },
+  ];
+  document.getElementById('spanishCards').innerHTML = cards.map(c=>`
+    <div class="vol-card" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;">
+      <div class="vol-icon">${c.icon}</div>
+      <div>
+        <div class="vol-label">${c.label}</div>
+        <div class="vol-val" style="color:${c.color};font-size:20px;">${c.val}</div>
+        ${c.sub?`<div class="vol-sub">${c.sub}</div>`:''}
+      </div>
+    </div>`).join('');
+
+  // Queue table
+  const rowHTML = (d, isTotal=false) => {
+    const slC  = goalClass('sl', d.slPct);
+    const asaC = d.avgASA>0?goalClass('asa',Math.round(d.avgASA)):'neutral';
+    const ahtC = d.avgHandle>0?goalClass('aht',Math.round(d.avgHandle)):'neutral';
+    const abC  = goalClass('abandon', d.abandonPct);
+    return `
+      <td>${isTotal?'<strong>SPANISH TOTAL</strong>':d.queue}</td>
+      <td><strong>${d.offered}</strong></td>
+      <td style="color:var(--green)">${d.answered}</td>
+      <td style="color:var(--teal)">${d.transferred} <span style="font-size:10px;color:var(--text3)">${d.transferPct}%</span></td>
+      <td style="color:var(--red)">${d.abandoned}</td>
+      <td><span class="badge ${badgeClass(abC)}">${d.abandonPct}%</span></td>
+      <td style="color:var(--teal)">${d.callbacks}</td>
+      <td style="color:var(--blue)">${d.outbound}</td>
+      <td>${d.denied}</td>
+      <td class="kpi-${ahtC}">${d.avgTalk>0?secToMS(d.avgTalk):'—'}</td>
+      <td class="kpi-${ahtC}">${d.avgHandle>0?secToMS(d.avgHandle):'—'}</td>
+      <td class="kpi-${asaC}">${d.avgASA>0?Math.round(d.avgASA)+'s':'—'}</td>
+      <td><span class="badge ${badgeClass(slC)}">${d.slPct}%</span></td>`;
+  };
+  document.getElementById('spanishQueueBody').innerHTML = qm.map(d=>`<tr>${rowHTML(d)}</tr>`).join('');
+  document.getElementById('spanishQueueFoot').innerHTML = `<tr>${rowHTML(m.offered>0?{...m,queue:'',avgTalk:m.avgTalk,avgHandle:m.avgHandle,avgASA:m.avgASA,transferPct:m.transferPct,deniedPct:m.deniedPct}:m, true)}</tr>`;
+}
+
+function render() {
+  const voiceRows   = filterData(false, false);   // English voice only
+  const spanishRows = filterData(false, true);    // Spanish voice only
+  const chatRows    = filterData(true,  false);   // Chat only
+  const m = computeMetrics(voiceRows);
+  renderGoals(m);
+  renderVolCards(m);
+  renderIVRSection(m);
+  renderSpanishSection(spanishRows);
+  renderChatSection(chatRows);
+  renderCharts(computeHourly(voiceRows));
+  renderStaffingSection();
+  renderQueueTable(computeQueueMetrics(voiceRows));
+  renderUserTable(computeUserMetrics(voiceRows));
+  updateStatus(voiceRows);
+}
+
+function renderGoals(m) {
+  const goals = [
+    { key:'sl',      val: m.slPct,                         display: m.slPct+'%' },
+    { key:'asa',     val: Math.round(m.avgASA),            display: Math.round(m.avgASA)+'s' },
+    { key:'aht',     val: Math.round(m.avgHandle),         display: m.avgHandle>0?secToMS(m.avgHandle):'—' },
+    { key:'abandon', val: m.abandonPct,                    display: m.abandonPct+'%' },
+    { key:'cb',      val: Math.round(m.avgCB),             display: m.avgCB>0?secToHM(m.avgCB):'—' },
+  ];
+  const targets = { sl:'≥ 80%', asa:'< 60s', aht:'< 7:30', abandon:'< 10%', cb:'< 60 min' };
+  const barMaxes = { sl:100, asa:120, aht:600, abandon:20, cb:7200 };
+
+  document.getElementById('goalCards').innerHTML = goals.map(g => {
+    const gc = g.val===0&&g.key!=='sl' ? 'neutral' : goalClass(g.key, g.val);
+    const barW = Math.min(100, g.val / barMaxes[g.key] * 100);
+    const barActual = g.key==='sl' ? g.val : Math.min(100, g.val/barMaxes[g.key]*100);
+    return `<div class="goal-card ${gc}">
+      <div class="goal-label">${GOALS[g.key].label}</div>
+      <div class="goal-value ${gc}">${g.display}</div>
+      <div class="goal-target">Goal: ${targets[g.key]}</div>
+      <div class="goal-bar-wrap"><div class="goal-bar ${gc}" style="width:${barActual}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderVolCards(m) {
+  const cards = [
+    { icon:'📞', label:'Queue Offered',      val: m.offered,            color:'var(--text)',    sub:'Agent-handled calls' },
+    { icon:'✅', label:'Total Answered',     val: m.answered,           color:'var(--green)' },
+    { icon:'📤', label:'Total Outbound',     val: m.outbound,           color:'var(--blue)' },
+    { icon:'↗️', label:'Total Transferred',  val: m.transferred,        color:'var(--teal)',    sub: `${m.transferPct}% of answered` },
+    { icon:'❌', label:'Queue Abandoned',    val: m.abandoned,          color:'var(--red)',     sub: `${m.abandonPct}% of queue offered` },
+    { icon:'🔄', label:'Total Callbacks',    val: m.callbacks,          color:'var(--teal)' },
+    { icon:'🚫', label:'Total Denied',       val: m.denied,             color:'var(--yellow)',  sub: `${m.deniedPct}% of offered` },
+    { icon:'⏱', label:'Avg Talk Time',      val: m.avgTalk>0?secToMS(m.avgTalk):'—', color:'var(--text2)', sub:'min:sec per call' },
+  ];
+  document.getElementById('volCards').innerHTML = cards.map(c=>`
+    <div class="vol-card">
+      <div class="vol-icon">${c.icon}</div>
+      <div>
+        <div class="vol-label">${c.label}</div>
+        <div class="vol-val" style="color:${c.color}">${c.val}</div>
+        ${c.sub?`<div class="vol-sub">${c.sub}</div>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function renderCharts(hrs) {
+  const hList = Object.keys(hrs).map(Number).sort((a,b)=>a-b);
+  const maxOff = Math.max(...hList.map(h=>hrs[h].offered),1);
+  const fmt = h => h===12?'12PM':h>12?`${h-12}PM`:`${h}AM`;
+
+  document.getElementById('callsChart').innerHTML = hList.map(h=>{
+    const offPct = hrs[h].offered/maxOff*100;
+    const ansPct = hrs[h].answered/maxOff*100;
+    return `<div class="bar-col" style="position:relative;height:100%;">
+      <div style="flex:1;display:flex;align-items:flex-end;gap:1px;width:100%;">
+        <div class="bar" style="flex:1;height:${Math.max(offPct,2)}%;background:rgba(59,130,246,0.4);"
+          data-tip="${fmt(h)}: ${hrs[h].offered} offered"></div>
+        <div class="bar" style="flex:1;height:${Math.max(ansPct,2)}%;background:var(--green);"
+          data-tip="${fmt(h)}: ${hrs[h].answered} answered"></div>
+      </div>
+      <div class="bar-lbl">${fmt(h)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('callsHopNote').textContent = '🔵 Offered  🟢 Answered';
+
+  document.getElementById('slChart').innerHTML = hList.map(h=>{
+    const slVal = hrs[h].answered>0 ? Math.round(hrs[h].slaAnswered/hrs[h].answered*100) : 0;
+    const abPct = hrs[h].offered>0 ? Math.round(hrs[h].abandoned/hrs[h].offered*100) : 0;
+    const slColor = slVal>=80?'var(--green)':slVal>=60?'var(--yellow)':'var(--red)';
+    return `<div class="bar-col" style="height:100%;">
+      <div style="flex:1;display:flex;align-items:flex-end;gap:1px;width:100%;">
+        <div class="bar" style="flex:1;height:${Math.max(slVal,2)}%;background:${slColor};"
+          data-tip="${fmt(h)} SL: ${slVal}%"></div>
+        <div class="bar" style="flex:1;height:${Math.max(abPct*3,2)}%;background:var(--red);"
+          data-tip="${fmt(h)} Abandon: ${abPct}%"></div>
+      </div>
+      <div class="bar-lbl">${fmt(h)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('slHopNote').textContent = '🟢/🟡/🔴 Service Level  🔴 Abandon Rate (3x scale)';
+}
+
+function renderQueueTable(qm) {
+  document.getElementById('queueCount').textContent = `${qm.length} queue${qm!==1?'s':''}`;
+  if (!qm.length) {
+    document.getElementById('queueBody').innerHTML = `<tr><td colspan="14" style="text-align:center;padding:40px;color:var(--text3);">No data for selected filters</td></tr>`;
+    document.getElementById('queueFoot').innerHTML = '';
+    return;
+  }
+
+  const rowHTML = (d, isTotal=false) => {
+    const slC = goalClass('sl', d.slPct);
+    const asaC = d.avgASA>0?goalClass('asa',Math.round(d.avgASA)):'neutral';
+    const ahtC = d.avgHandle>0?goalClass('aht',Math.round(d.avgHandle)):'neutral';
+    const abC  = goalClass('abandon',d.abandonPct);
+    const style = isTotal ? '' : '';
+    return `
+      <td>${isTotal?'<strong>ALL QUEUES</strong>':d.queue}</td>
+      <td><strong>${d.offered}</strong></td>
+      <td style="color:var(--green)">${d.answered}</td>
+      <td style="color:var(--teal)">${d.transferred} <span style="font-size:10px;color:var(--text3)">${d.transferPct}%</span></td>
+      <td style="color:var(--red)">${d.abandoned}</td>
+      <td><span class="badge ${badgeClass(abC)}">${d.abandonPct}%</span></td>
+      <td style="color:var(--teal)">${d.callbacks}</td>
+      <td style="color:var(--blue)">${d.outbound}</td>
+      <td>${d.denied}</td>
+      <td><span class="badge ${d.deniedPct>5?'badge-yellow':'badge-blue'}">${d.deniedPct}%</span></td>
+      <td class="kpi-${ahtC==='neutral'?'neutral':ahtC}">${d.avgTalk>0?secToMS(d.avgTalk):'—'}</td>
+      <td class="kpi-${ahtC}">${d.avgHandle>0?secToMS(d.avgHandle):'—'}</td>
+      <td class="kpi-${asaC}">${d.avgASA>0?Math.round(d.avgASA)+'s':'—'}</td>
+      <td><span class="badge ${badgeClass(slC)}">${d.slPct}%</span></td>`;
+  };
+
+  document.getElementById('queueBody').innerHTML = qm.map(d=>`<tr>${rowHTML(d)}</tr>`).join('');
+
+  // Totals row
+  const tot = computeMetrics(filterData());
+  document.getElementById('queueFoot').innerHTML = `<tr>${rowHTML(tot, true)}</tr>`;
+}
+
+function renderUserTable(um) {
+  document.getElementById('userCount').textContent = `${um.length} agent${um.length!==1?'s':''}`;
+  if (!um.length) {
+    document.getElementById('userBody').innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:var(--text3);">No data</td></tr>`;
+    document.getElementById('userFoot').innerHTML='';return;
+  }
+  const sorted = [...um].sort((a,b)=>b.answered-a.answered);
+  const rowHTML = (d, isTotal=false) => {
+    const ahtC = d.avgHandle>0?goalClass('aht',Math.round(d.avgHandle)):'neutral';
+    const asaC = d.avgASA>0?goalClass('asa',Math.round(d.avgASA)):'neutral';
+    const slC  = goalClass('sl',d.slPct);
+    return `
+      <td>${isTotal?'<strong>TEAM AVG</strong>':d.user}</td>
+      <td style="color:var(--green)">${d.answered}</td>
+      <td style="color:var(--teal)">${d.transferred||0}</td>
+      <td style="color:var(--blue)">${d.outbound}</td>
+      <td class="kpi-${ahtC}">${d.avgTalk>0?secToMS(d.avgTalk):'—'}</td>
+      <td class="kpi-${ahtC}">${d.avgHandle>0?secToMS(d.avgHandle):'—'}</td>
+      <td class="kpi-${asaC}">${d.avgASA>0?Math.round(d.avgASA)+'s':'—'}</td>
+      <td>${d.avgWrap>0?secToMS(d.avgWrap):'—'}</td>
+      <td><span class="badge ${badgeClass(slC)}">${d.slPct}%</span></td>
+      <td style="color:var(--teal)">${d.callbacks}</td>
+      <td>${d.denied}</td>`;
+  };
+  document.getElementById('userBody').innerHTML = sorted.map(d=>`<tr>${rowHTML(d)}</tr>`).join('');
+
+  // Team averages
+  const n = um.length||1;
+  const teamAvg = {
+    answered: um.reduce((s,u)=>s+u.answered,0),
+    transferred: um.reduce((s,u)=>s+(u.transferred||0),0),
+    outbound: um.reduce((s,u)=>s+u.outbound,0),
+    avgTalk:   avg(um.filter(u=>u.avgTalk>0).map(u=>u.avgTalk)),
+    avgHandle: avg(um.filter(u=>u.avgHandle>0).map(u=>u.avgHandle)),
+    avgASA:    avg(um.filter(u=>u.avgASA>0).map(u=>u.avgASA)),
+    avgWrap:   avg(um.filter(u=>u.avgWrap>0).map(u=>u.avgWrap)),
+    slPct:     Math.round(um.reduce((s,u)=>s+u.slPct,0)/n),
+    callbacks: um.reduce((s,u)=>s+u.callbacks,0),
+    denied:    um.reduce((s,u)=>s+u.denied,0),
+  };
+  document.getElementById('userFoot').innerHTML = `<tr>${rowHTML(teamAvg,true)}</tr>`;
+}
+
+function updateStatus(rows) {
+  let label = '';
+  if (currentTab==='day') label = document.getElementById('dateFilter').value||'';
+  else if (currentTab==='week'&&weekMonday) {
+    const days = getWeekDays(weekMonday);
+    label = `${days[0]} – ${days[6]}`;
+  } else {
+    const ds = document.getElementById('dateFilter').value;
+    label = ds ? new Date(ds+'T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'}) : '';
+  }
+  document.getElementById('lastUpdated').textContent = `${label} · ${rows.length.toLocaleString()} records`;
+}
+
+// ============================================================
+// CONTROLS
+// ============================================================
+function setTab(tab) {
+  currentTab = tab;
+  ['day','week','month'].forEach(t=>{
+    document.getElementById('tab'+t[0].toUpperCase()+t.slice(1)).classList.toggle('active',t===tab);
+  });
+  const picker = document.getElementById('datePicker');
+  const weekGrp = document.getElementById('weekNavGroup');
+  if (tab==='week') {
+    picker.style.display='none'; weekGrp.style.display='flex';
+    if(!weekMonday) {
+      const ds = document.getElementById('dateFilter').value;
+      weekMonday = getMondayOf(ds||new Date().toLocaleDateString('en-CA'));
+    }
+    renderWeekNav();
+  } else {
+    picker.style.display=''; weekGrp.style.display='none';
+  }
+  render();
+}
+
+function navWeek(dir) {
+  if(!weekMonday)return;
+  weekMonday = new Date(weekMonday);
+  weekMonday.setDate(weekMonday.getDate()+dir*7);
+  renderWeekNav();
+  render();
+}
+
+function renderWeekNav() {
+  if(!weekMonday)return;
+  const days = getWeekDays(weekMonday);
+  const fmt = d => new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const yr  = new Date(days[6]+'T12:00:00').getFullYear();
+  document.getElementById('weekRangeLbl').textContent = `Mon ${fmt(days[0])} – Sun ${fmt(days[6])}, ${yr}`;
+}
+
+function applyFilters() { render(); }
+
+function populateDropdowns() {
+  const queues = [...new Set(RAW.filter(r=>!r.isChat&&!r.isSpanish).map(r=>r.queue).filter(Boolean))].sort();
+  const users  = [...new Set(RAW.filter(r=>!r.isChat&&!r.isSpanish).map(r=>r.user).filter(Boolean))].sort();
+  document.getElementById('queueFilter').innerHTML = '<option value="">All Queues</option>'+queues.map(q=>`<option>${q}</option>`).join('');
+  document.getElementById('userFilter').innerHTML  = '<option value="">All Users</option>'+users.map(u=>`<option>${u}</option>`).join('');
+}
+
+function setDefaultDate() {
+  const dates = [...new Set(RAW.map(r=>r.date))].filter(Boolean).sort();
+  if (dates.length) {
+    const latest = dates[dates.length-1];
+    document.getElementById('dateFilter').value = latest;
+    weekMonday = getMondayOf(latest);
+  }
+}
+
+// ============================================================
+// UPLOAD
+// ============================================================
+function handleUpload(e) {
+  const file = e.target.files[0];
+  if(!file)return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    RAW = normalizeRows(parseCSV(ev.target.result));
+    populateDropdowns();
+    setDefaultDate();
+    render();
+    document.getElementById('lastUpdated').textContent = `Updated: ${new Date().toLocaleString()}`;
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function handleStaffingUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const rows = parseStaffingCSV(ev.target.result);
+      STAFFING_RAW = normalizeStaffingRows(rows);
+      if (!STAFFING_RAW.length) {
+        alert('No valid staffing rows found. Make sure you are uploading the User State Detail report.');
+        return;
+      }
+      renderStaffingSection();
+      document.getElementById('staffingStatus').textContent =
+        `Staffing loaded ✓ · ${STAFFING_RAW.length.toLocaleString()} records`;
+      document.getElementById('lastUpdated').textContent =
+        `Updated: ${new Date().toLocaleString()}`;
+    } catch(err) {
+      alert('Error reading staffing file: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+function exportCSV() {
+  const rows = filterData();
+  const m = computeMetrics(rows);
+  alert(`Export: ${rows.length} rows · ${m.answered} answered · SL ${m.slPct}%`);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+(function init() {
+  // Load CDR call data
+  const tag = document.getElementById('embeddedData');
+  if (tag && tag.textContent.trim().length > 100) {
+    RAW = normalizeRows(parseCSV(tag.textContent.trim()));
+    populateDropdowns();
+    setDefaultDate();
+    render();
+  } else {
+    document.getElementById('goalCards').innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--text3);">
+        <div style="font-size:48px;margin-bottom:12px;">📂</div>
+        <div style="font-family:var(--mono);font-size:15px;color:var(--text2);margin-bottom:6px;">No Call Data Loaded</div>
+        <div style="font-size:13px;">Upload your CDR Daily Download CSV using the 📞 button above</div>
+      </div>`;
+  }
+
+  // Load embedded staffing data if present (pre-loaded by automation)
+  const staffTag = document.getElementById('embeddedStaffing');
+  if (staffTag && staffTag.textContent.trim().length > 100) {
+    STAFFING_RAW = normalizeStaffingRows(parseStaffingCSV(staffTag.textContent.trim()));
+    if (STAFFING_RAW.length) {
+      renderStaffingSection();
+      document.getElementById('staffingStatus').textContent =
+        `Staffing loaded ✓ · ${STAFFING_RAW.length.toLocaleString()} records`;
+    }
+  }
+})();
+</script>
+
+<!-- EMBEDDED DATA — automation injects CSV here -->
+<script id="embeddedData" type="text/csv-data">
+</script>
+<script id="embeddedStaffing" type="text/csv-data">
+</script>
+</body>
+</html>
