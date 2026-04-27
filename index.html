@@ -43,7 +43,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 .upload-btn.purple:hover{background:rgba(167,139,250,0.1);border-color:var(--purple);}
 .upload-btn.loaded{border-color:var(--green);color:var(--green);}
 .upload-btn.loaded:hover{background:rgba(16,185,129,0.1);}
-input[type=file]{position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;}
+label.upload-btn{cursor:pointer;}
 .live-badge{display:flex;align-items:center;gap:6px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:20px;padding:5px 12px;font-size:10px;font-family:var(--mono);color:var(--green);letter-spacing:0.1em;}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
@@ -384,14 +385,14 @@ tbody tr:hover td.agent-col{background:#0f1a28;}
   <div class="header-right">
     <span class="last-updated" id="lastUpdated">Ready</span>
     <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-    <input type="file" id="cdrInput" accept=".csv" onchange="handleCDRUpload(event)">
-    <input type="file" id="scheduleInput" accept=".csv" multiple onchange="handleScheduleUpload(event)">
-    <input type="file" id="stateInput" accept=".csv" multiple onchange="handleStateUpload(event)">
+    <input type="file" id="cdrInput" accept=".csv" onchange="handleCDRUpload(event)" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;">
+    <input type="file" id="scheduleInput" accept=".csv" multiple onchange="handleScheduleUpload(event)" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;">
+    <input type="file" id="stateInput" accept=".csv" multiple onchange="handleStateUpload(event)" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;">
     <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end;">
       <div style="display:flex;gap:6px;">
-        <button class="upload-btn" id="cdrBtn" onclick="document.getElementById('cdrInput').click()">📞 CDR Report</button>
-        <button class="upload-btn teal" id="schedBtn" onclick="document.getElementById('scheduleInput').click()" title="Hold Ctrl/Cmd to select multiple weeks">📅 Schedule CSV (multi)</button>
-        <button class="upload-btn blue" id="stateBtn" onclick="document.getElementById('stateInput').click()" title="Hold Ctrl/Cmd to select multiple state files">👤 User State Detail</button>
+        <label for="cdrInput" class="upload-btn" id="cdrBtn">📞 CDR Report</label>
+        <label for="scheduleInput" class="upload-btn teal" id="schedBtn" title="Hold Ctrl/Cmd to select multiple weeks">📅 Schedule CSV (multi)</label>
+        <label for="stateInput" class="upload-btn blue" id="stateBtn" title="Hold Ctrl/Cmd to select multiple state files">👤 User State Detail</label>
         <button class="upload-btn purple" onclick="shareData()">🔗 Share Link</button>
         <button class="upload-btn" id="publishBtn" onclick="publishData()" style="display:none;color:var(--green);border-color:rgba(16,185,129,0.4);">📤 Publish Data</button>
       </div>
@@ -517,7 +518,7 @@ tbody tr:hover td.agent-col{background:#0f1a28;}
     <div class="upload-prompt-title">Upload CDR Report to Get Started</div>
     <div class="upload-prompt-sub">Upload your Call Detail Record CSV to see operations metrics, call volume charts, and agent performance.</div>
     <div class="upload-prompt-btns">
-      <button class="upload-btn" onclick="document.getElementById('cdrInput').click()">📞 Upload CDR Report</button>
+      <label for="cdrInput" class="upload-btn">📞 Upload CDR Report</label>
     </div>
   </div>
 
@@ -645,8 +646,8 @@ tbody tr:hover td.agent-col{background:#0f1a28;}
       <strong style="color:var(--teal)">User State Detail CSV</strong> — Actual worked time & state data
     </div>
     <div class="upload-prompt-btns">
-      <button class="upload-btn" onclick="document.getElementById('scheduleInput').click()">📅 Schedule CSV(s)</button>
-      <button class="upload-btn teal" onclick="document.getElementById('stateInput').click()">👤 User State Detail</button>
+      <label for="scheduleInput" class="upload-btn">📅 Schedule CSV(s)</label>
+      <label for="stateInput" class="upload-btn teal">👤 User State Detail</label>
     </div>
     <div style="margin-top:16px;font-family:var(--mono);font-size:11px;color:var(--text3)" id="adhUploadStatus"></div>
   </div>
