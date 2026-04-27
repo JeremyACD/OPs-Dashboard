@@ -27,7 +27,7 @@ Download `index.html` from the repo and open it in Chrome. Upload your files usi
 - **📅 Schedule CSV(s)** — Weekly Data Export files. Hold **Ctrl** (Windows) or **Cmd** (Mac) to select multiple weeks at once for a full month
 - **👤 User State Detail** — Actual worked time and state data. Hold **Ctrl/Cmd** to select multiple files if your state export spans multiple date ranges — they are merged automatically
 
-> **Tip:** If clicking an upload button doesn't open a file dialog, try a hard refresh first (**Ctrl+Shift+R** on Windows, **Cmd+Shift+R** on Mac), then try again.
+> **Note on large files:** The CDR Report can be processed even if it covers several months of data. A progress indicator will appear showing the file size and processing percentage — just wait for it to complete before uploading the next file.
 
 ### Step 2 — Publish
 Once all files are loaded, click the **📤 Publish Data** button in the header. This downloads a fresh `dashboard-data.json` to your computer.
@@ -247,4 +247,4 @@ If your state data is split across multiple export files, select all files at on
 - Compatible with Chrome and Edge; best viewed on a widescreen monitor
 - Data is compressed with LZ-String before publishing to keep file sizes small
 - Published data auto-loads on page open; if data was built with an older version of the dashboard, a red warning banner will prompt the admin to re-publish
-- Upload buttons use off-screen positioned file inputs (not `display:none`) to ensure cross-browser compatibility with file picker dialogs
+- Upload buttons use native HTML `<label>` elements linked to file inputs — this is the most reliable cross-browser approach and works without any JavaScript involvement
