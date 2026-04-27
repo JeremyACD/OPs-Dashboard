@@ -1364,6 +1364,7 @@ function filterByQuarter(rows){
     return ry===year&&months.includes(rm);
   });
 }
+function initAdhWeekStart(){
   if(!ADH_DATA||!ADH_DATA.dates.length)return;
 
   // Find the last date that has actual state activity for at least one agent
